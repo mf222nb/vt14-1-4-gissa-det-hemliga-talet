@@ -28,11 +28,7 @@ namespace Hemliga_talet.Model
         {
             get
             {
-                if (Count == MaxNumberOfGuesses)
-                {   
-                    return false;
-                };
-                return true;
+                return Count < MaxNumberOfGuesses && Outcome != Model.Outcome.Correct;
             }
         }
         
@@ -91,11 +87,12 @@ namespace Hemliga_talet.Model
             {
                 throw new ArgumentOutOfRangeException();
             }
-            else if (PreviousGuesses.Contains(guess))
+            
+            if (PreviousGuesses.Contains(guess))
             {
                 Outcome = Outcome.PreviousGuess;
             }
-            else if (CanMakeGuess == false)
+            else if (!CanMakeGuess)
             {
                 Outcome = Outcome.NoMoreGuesses;
             }

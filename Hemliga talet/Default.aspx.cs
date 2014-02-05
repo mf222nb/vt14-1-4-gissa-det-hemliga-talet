@@ -14,12 +14,16 @@ namespace Hemliga_talet
         {
             get
             {
-                return Session["SecretNumber"] as SecretNumber;
+                return Session["SecretNumber"] as SecretNumber ?? (SecretNumber)(Session["SecretNumber"] = new SecretNumber());
             }
-            set
-            {
-                Session["SecretNumber"] = value;
-            }
+            //get
+            //{
+            //    return Session["SecretNumber"] as SecretNumber;
+            //}
+            //set
+            //{
+            //    Session["SecretNumber"] = value;
+            //}
         }
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -28,12 +32,18 @@ namespace Hemliga_talet
 
         protected void Button1_Click(object sender, EventArgs e)
         {
+            //if (Session.IsNewSession)
+            //{
+            //    // Felmeddelande!!!
+            //    return;
+            //}
+
             if (IsValid)
             {
-                if (SecretNumber == null)
-                {
-                    SecretNumber = new SecretNumber();
-                }
+                //if (SecretNumber == null)
+                //{
+                //    SecretNumber = new SecretNumber();
+                //}
 
                 var guess = int.Parse(GuessTextBox.Text);
 
@@ -71,7 +81,7 @@ namespace Hemliga_talet
         protected void ResetButton_Click(object sender, EventArgs e)
         {
             SecretNumber.Initialize();
-            GuessTextBox.Focus();
+            //GuessTextBox.Focus();
         }
     }
 }
