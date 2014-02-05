@@ -9,7 +9,7 @@ namespace Hemliga_talet.Model
 {
     public enum Outcome
     {
-        Indefine,
+        Indefinite,
         Low,
         High,
         Correct,
@@ -17,7 +17,7 @@ namespace Hemliga_talet.Model
         PreviousGuess
     }
 
-    public class SecretNumber: IEnumerable
+    public class SecretNumber
     {
         private int _number;
         private List<int> _previousGuesses;
@@ -28,10 +28,8 @@ namespace Hemliga_talet.Model
         {
             get
             {
-                if (_previousGuesses.Count == MaxNumberOfGuesses)
-                {
-                    Outcome = Outcome.NoMoreGuesses;
-                    
+                if (Count == MaxNumberOfGuesses)
+                {   
                     return false;
                 };
                 return true;
@@ -40,7 +38,10 @@ namespace Hemliga_talet.Model
         
         public int Count 
         {
-            get { return _previousGuesses.Count;} 
+            get 
+            { 
+                return _previousGuesses.Count;
+            } 
         }
 
         public int? Number 
@@ -57,26 +58,63 @@ namespace Hemliga_talet.Model
                 }
             } 
         }
+
+        public Outcome Outcome
+        {
+            get;
+            private set;
+        }
         
-        public Outcome Outcome { get; set; }
-        
+        //Skickar enbart tillbaka en readonly referens av listan
         public IEnumerable<int> PreviousGuesses 
         {
-            get { return _previousGuesses.AsReadOnly(); }
+            get 
+            { 
+                return _previousGuesses.AsReadOnly(); 
+            }
         }
 
         //Metoder
         public void Initialize()
         {
+            _previousGuesses.Clear();
+
             Random random = new Random();
             _number = random.Next(1, 101);
 
-            _previousGuesses.Clear();
-            Outcome = Outcome.Indefine;
+            Outcome = Outcome.Indefinite;
         }
 
         public Outcome MakeGuess(int guess)
         {
+            if (guess < 1 || guess > 100)
+            {
+                throw new ArgumentOutOfRangeException();
+            }
+            else if (PreviousGuesses.Contains(guess))
+            {
+                Outcome = Outcome.PreviousGuess;
+            }
+            else if (CanMakeGuess == false)
+            {
+                Outcome = Outcome.NoMoreGuesses;
+            }
+            else if (guess < _number)
+            {
+                _previousGuesses.Add(guess);
+                Outcome = Outcome.Low;
+            }
+            else if (guess > _number)
+            {
+                _previousGuesses.Add(guess);
+                Outcome = Outcome.High;
+            }
+            else
+            {
+                _previousGuesses.Add(guess);
+                Outcome = Outcome.Correct;
+            }
+
             return Outcome;
         }
 
@@ -84,11 +122,6 @@ namespace Hemliga_talet.Model
         {
             _previousGuesses = new List<int>(MaxNumberOfGuesses);
             Initialize();
-        }
-
-        public IEnumerator GetEnumerator()
-        {
-            throw new NotImplementedException();
         }
     }
 }
